@@ -1,5 +1,5 @@
 # JAWS
-Trabalho realizada por Adriano Machado e Wyller Fernandes como trabalho de conclusão de curso
+Trabalho realizado por Adriano Machado e Wyller Fernandes como trabalho de conclusão de curso
 
 Desenvolvimento de Ferramenta On-line Educacional para Cálculo de Estruturas Reticuladas Via Métodos dos Deslocamentos em Formulação Matricial Implementada em Linguagem Javascript - JAWS
 
