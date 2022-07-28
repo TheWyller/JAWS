@@ -1,0 +1,274 @@
+@import url(http://fonts.googleapis.com/css?family=Oswald);
+
+
+
+
+html
+{
+    font-size: 11pt;	
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight:400;
+}
+
+
+
+.sidenav
+ {
+    height: 100%;   
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ccc;
+    overflow-x: hidden;
+    transition: 0.1s;
+    padding-top: 0px;
+}
+/*
+.teste
+ {
+    height: 0;   
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ccc;
+    overflow-x: hidden;
+    transition: 0.1s;
+    padding-top: 0px;
+}
+
+*/
+
+
+.sidenav a
+{
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover
+{
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn 
+{
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+/* tirei isso 03-11-18 - alguma mudança???
+@media screen and (max-height: 450px) {
+.sidenav {padding-top: 0px;}
+.sidenav a {font-size: 18px;}
+}
+*/
+
+
+/*///////////////////// estilo interno dos botões da sidenav//////////////////// */
+
+
+.sidenav a 
+{
+    padding: 5px 5px 5px 5px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #ccc;
+    display: block;
+    transition: 0.1s;
+}
+
+.sidenav a:hover 
+{
+    color: #f1f1f1;   
+}
+
+.sidenav .closebtn 
+{
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 600px) {
+.sidenav {padding-top: 0px;}
+.sidenav a {font-size: 16px;}
+}
+/* tirei sisso hoje 03-11-18 alguma coisa
+.p{
+    color: yellow;
+    font-weight: bold;
+}
+*/
+/* TAB */
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: whitesmoke;
+    color: #242222;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    text-align: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 1px 1px 1px 5px;
+    transition: 0.1s;
+    font-size: 15px;
+    color: yellow;
+    font-weight: bold;
+    font-family: "Oswald", sans-serif;
+    width: 100px;
+    height: 40px;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    border-radius: 5px;
+    background-color: rgba(204, 204, 204, 0.686);
+    color: black;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 5px 10px;
+    border: 1px solid #ccc; /* cor borda do corpo table sidenav*/
+    background-color: whitesmoke; /* cor do fundo do corpo table sidenav*/
+    border-top: none;
+    font-size: 15px;
+    color: black;
+}
+
+.nav1 {
+    font-size: 15px;
+    font-weight: normal;
+    color: black;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.btnFechar {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 100%;
+    font-family: "Oswald", sans-serif;
+}
+
+
+#view, #solve, #plotar, #abrir{
+    width: 70px;
+    
+    text-align: center;
+    height: 40px;
+    padding: 2px;
+    margin: 3px -1px 3px -1px;
+   
+}
+
+#navTop{
+    font-weight: 445;
+    font-size: 19px;
+    color:#232323;
+    transition: 0.1s;
+    cursor:pointer;
+    
+}
+
+#navTop:hover{
+    color: black;
+    font-weight: 600;
+}
+
+
+
+input[type=tel] {
+    width: 50px;
+    text-align: center;
+}
+
+input[type=text] {
+    width: 50px;
+    text-align: center;
+}
+
+input[type=textIndice] {
+    width: 35px;
+    text-align: center;
+}
+
+#rel{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    
+}
+
+/* Estilo fonte awesome */
+.fa-rotate-45 {
+    -ms-transform:rotate(45deg);     /* Internet Explorer 9 */
+    -webkit-transform:rotate(45deg); /* Chrome, Safari, Opera */
+    transform:rotate(-45deg);         /* Standard syntax */
+    }
+    
+#title{               /**Estilo para mudar texto da barra de navegação*/
+    color: #242222;
+    font-weight: 700; 
+    
+}
+th{
+    font-size: 10pt;
+    text-align: center;
+}
+
+#indice{
+    width: 25px;
+    height: 22px;;
+    margin: 0px 0px 4px 5px;    
+    background-color : #f1f1f1; 
+    border-radius: 5px;
+    
+}
+
+#dx, #dy, #rz{
+    width:50px;
+}
+
+#restbox{
+    width: 20px;
+}
+
+#area, #inercia, #elasticidade{
+    width: 80px;
+}
+
+
+
+
+
+

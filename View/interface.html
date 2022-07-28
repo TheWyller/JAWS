@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+   
+   <meta charset="UTF-8">
+   <link rel="stylesheet" href="libraries/ext/bootstrap\bootstrap.min.css"/>
+   <link rel="stylesheet" href="libraries/ext/font-awesome\css\font-awesome.css"/>
+   <link rel="stylesheet" href="libraries/estiloSidenavPlotterV3.css"/>
+   <link rel="stylesheet" href="libraries/estiloMemorialCalculo.css"/>
+   <style>
+    #construcao
+    {
+        font-size: 11px;
+    }
+
+    #construcao table
+    {
+        font-size: 13px;
+    }
+
+    .navmenu 
+    {
+        overflow: hidden;
+        height: 40px;
+        position: fixed;
+        top: 5px;
+        margin-left: 4px;
+        width: 100%;
+    }
+
+    img 
+    {
+        border: 1px solid rgb(144, 140, 140);
+        border-radius: 4px;
+        padding: 3px;
+    }
+
+
+    /* ESTILO BOTÃO AUTO*/
+    .switch
+    {
+        position: relative;
+        display: inline-block;
+        width: 45px;
+        height: 24px;
+    }
+
+    .switch input 
+    { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+    }
+
+    .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    }
+
+.slider:before 
+{
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 30px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+li{
+    display: inline-block;
+    margin: -2px 0px 0px 0px;
+    padding: 0px;
+    position: relative;
+    left: 5px;   
+}
+
+#navTop{
+    background-color: whitesmoke;
+    height: 45px;
+    width: 100%;
+    z-index:1002;
+    margin: 0px 0px 0px 0px;
+   
+}
+
+#navTop ul{
+    position: relative;
+     
+   background-color: whitesmoke;
+   width: 100%;
+   height: 39px;
+   margin: 0px;
+   padding: 0px;
+   z-index:1002;
+   margin: -4px 0px 0px 2px;
+}
+
+#navTop li{
+    display: inline-block;
+    margin: -1px -2px -2px 0px;
+    padding: 0px;
+    position: relative;
+    left: -4px;   
+}
+
+#navBottom{
+    background-color: whitesmoke;
+    height: 41px;
+    width: 100%;
+    z-index:1002;
+    margin: 0px 0px 0px 0px;
+}
+
+#navBottom ul{
+ 
+   background-color: whitesmoke;
+   width: 100%;
+   height: 25px;
+   margin: -10px 0px 0px 2px;
+   padding: 0px;
+   z-index:1002;
+}
+
+#navBottom li{
+    display: inline-block;
+    margin: 5px 6px 0px 23px;
+    padding: 0px;
+    position: relative;
+    top: -4px;   
+}
+
+
+.js-plotly-plot{
+    margin-top: 2.5vh;
+}
+
+.js-plotly-plot .plotly .modebar{
+    z-index: 1002;
+    left: 15%;
+    margin-top: 2.5vh;
+}
+
+.noSelect{
+    -webkit-touch-callout: none;  /* iPhone OS, Safari */
+    -webkit-user-select: none;    /* Chrome, Safari 3 */
+    -khtml-user-select: none;     /* Safari 2 */
+    -moz-user-select: none;       /* Firefox */
+    -ms-user-select: none;        /* IE10+ */
+     user-select: none;            /* Possível implementação no futuro */
+    /* cursor: default; */
+}
+
+
+
+/* FIM ESTILO BOTÃO AUTO*/
+
+  
+   </style>
+     
+  </head>
+  
+  <body id="corpo" style="height: 100vh;">
+    
+    
+   
+<div class="mainContainer" id="navContainer">
+   
+    <nav class="navbar fixed-top navbar-light" id="navTop">
+           <ul class="navbar-nav noSelect" style="display: inline-block;">
+                <li class="nav-item noSelect" id="abrir" ><a class="nav-link" ><span id="navTop" unselectable="on">☰input</span></a></li>
+                <li class="nav-item noSelect" id="plotar"><a class="nav-link"><span id="navTop" unselectable="on"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>plot</span></a></li>  
+                <li class="nav-item noSelect" id="view"><a class="nav-link"><span id="navTop" unselectable="on"><i class="fa fa-window-restore" aria-hidden="true"></i>view</span></a></li>
+                <li class="nav-item noSelect" id="solve"><a class="nav-link"><span id="navTop" unselectable="on" onclick="openTab(event, &#39;rel&#39;)"><i class="fa fa-calculator" aria-hidden="true"></i>solve</span><span></a></li>
+                    <!-- onclick="//openRel(event, &#39;rel&#39;)" para abrir a aba lateral na opção relatorio-->
+           </ul>
+    </nav>
+
+
+    <div class="container-fluid" id="side" style="height:100%">
+    <!-- INÍCIO DO MENU DE NAVEGAÇÃO LATERAL-->
+    <div id="mySidenav" class="sidenav" style="width:0px; z-index:1002; margin-left:-20px; background-color:whitesmoke">
+        <div class="tab">
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;prop&#39;)"><span id="title"><i class="fa fa-cube" aria-hidden="true"></i>Properties</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks active" onclick="openTab(event, &#39;node&#39;)"><span id="title"> <i class="fa fa-arrows-alt" aria-hidden="true"></i> Nodes</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;barr&#39;)"><span id="title"><i class="fa fa-exchange fa-rotate-45" aria-hidden="tru0e"></i> Bars</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;rest&#39;)"><span id="title"><i class="fa fa-ban" aria-hidden="true"></i> Restrains</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;cgnd&#39;)"><span id="title"><i class="fa fa-arrow-down" aria-hidden="true"></i> Nodal &nbsp;Loads</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;cgdi&#39;)"><span id="title"><i class="fa fa-long-arrow-down" aria-hidden="true"></i><i class="fa fa-long-arrow-down" aria-hidden="true"></i><i class="fa fa-long-arrow-down" aria-hidden="true"></i> Dist. &nbsp;Loads</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;diag&#39;)"><span id="title"><i class="fa fa-area-chart" aria-hidden="true"></i>Diagrams</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" onclick="openTab(event, &#39;iterator&#39;)"><span id="title"><i class="fa fa-tasks" aria-hidden="true"></i> Iterator</span></button></li>
+            <li class="nav-item noSelect" id="navTab" style="width: 95px;"><button class="tablinks" id="report" onclick="openTab(event, &#39;rel&#39;)"><span id="title" ><i class="fa fa-file-text" aria-hidden="true"></i> Report</span></button></li>
+        </div>
+
+        <!-- Tab content -->
+        <div id="prop" class="tabcontent noSelect" style="display: none;">
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>id </th>
+                            <th>A <br> [cm²]</th>
+                            <th>Ix <br> [cm⁴]</th>
+                            <th>E <br> [MPa]</th>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="p01" value="1" disabled><br> </td>
+                            <td> <input type="tel" name="A1" id="area"></td>
+                            <td> <input type="tel" name="I1" id="inercia" style="text-align:right"></td>
+                            <td> <input type="tel" name="E1" id="elasticidade" ></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="p02" value="2" disabled><br> </td>
+                            <td> <input type="tel" name="A2" id="area"></td>
+                            <td> <input type="tel" name="I2" id="inercia" style="text-align:right"></td>
+                            <td> <input type="tel" name="E2" id="elasticidade"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="p03" value="3" disabled><br> </td>
+                            <td> <input type="tel" name="A3" id="area"></td>
+                            <td> <input type="tel" name="I3" id="inercia"style="text-align:right"></td>
+                            <td> <input type="tel" name="E3" id="elasticidade"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="p04" value="4" disabled><br> </td>
+                            <td> <input type="tel" name="A4" id="area"></td>
+                            <td> <input type="tel" name="I4" id="inercia"style="text-align:right"></td>
+                            <td> <input type="tel" name="E4" id="elasticidade"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="p05" value="5" disabled><br> </td>
+                            <td> <input type="tel" name="A5" id="area"></td>
+                            <td> <input type="tel" name="I5" id="inercia"style="text-align:right"></td>
+                            <td> <input type="tel" name="E5" id="elasticidade"></td>
+                        </tr>
+                  </tbody>
+               </table>
+               <br>
+
+               <table>
+                    <tbody>
+                            <tr >
+                                    <th colspan="1" id="retangular">Rectangular</th>
+                                    <th >id
+                                     <th><select id="idSec" name="" style="width: 35px;height:25px;">
+                                            <option value="0" style="text-align: center">0</option>
+                                            <option value="1" selected="selected">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                                 <button id="aplicarSecao" value="1" style="width:50px; height:25px; text-align: center;">Apply</button>
+                                        </th>
+                                      
+                                </tr>
+
+                    
+                        <tr>
+                                
+                            <td rowspan="6"><img src="imgs/retangular.jpg" alt=""> </td>
+                        </tr>
+                      
+                        <tr>    
+                            <td> <input type="text" name="I01" id="inercia" value="M" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                            <td>
+                                <select id="matType1" name="" style="width:127px; height: 25px;">
+                                      
+                                        <option value="concretoC20">Concrete C20</option>
+                                        <option id="C25" value="28000" selected="selected">Concrete C25</option> 
+                                        <option value="acoMR">Steel</option>
+                                        <option value="acoMR">Wood</option>
+                                        
+                                       
+                                </select>
+                            </td>   
+                        </tr>
+                        <tr>
+                            <td> <input type="text" value="B" style="width:35px; height: 25px; font-weight: 600; color: #000;" disabled></td>
+                            <td> <input type="tel" name="retBase1" id="retBase"  style="width:95px; height: 25px;" value="20.00"> [cm]</td>      
+                        </tr>
+                       
+                        <tr>
+                            <td> <input type="text" name="H" value="H" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                            <td> <input type="tel" name="retAltura1" id="retAltura"  style="width:95px; height: 25.00px;" value="45.00"> [cm]</td>       
+                        </tr>
+                        <tr>
+                              
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <table>
+                    <tbody>
+                            <tr >
+                                    <th colspan="1" >T-Section</th>
+                                    <th colspan="2">id
+
+                                     <select id="idSec" name="" style="width: 35px;height:25px;">
+                                            <option value="0" style="text-align: center">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2"  selected="selected">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                          </select>
+                                          <button id="aplicarSecao" value="2" style="width:50px; height:25px; text-align: center;">Apply</button>
+                                        </th>
+                                </tr>
+
+                    
+                        <tr>
+                                
+                            <td rowspan="6"><img src="imgs/perfilt.jpg" alt=""> </td>
+                        </tr>
+                      
+                        <tr>    
+                                <td> <input type="text" name="I01" id="inercia" value="M" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                 <td>
+                                        <select id="matType2" name="" style="width:127px; height: 25px;">
+                                            <option value="concretoC20">Concrete C20</option>
+                                            <option value="28000" selected="selected">Concrete C25</option>
+                                            <option value="acoMR">Steel MR250</option>
+                                            <option value="acoMR">Steel AR350</option>
+                                      </select>
+                                    </td>   
+                        </tr>
+                        <tr>
+                             
+                                <td> <input type="text" name="I01" id="inercia" value="Bf" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="I01" id="bf"  style="width:95px; height: 25px;" value="60.00"> [cm]</td>
+                               
+                                
+                        </tr>
+                       
+                        <tr>
+                                <td> <input type="text" name="I01" id="inercia" value="Tf" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="A01" id="tf"  style="width:95px; height: 25px;" value="12.00"> [cm]</td>
+                                
+                                
+                        </tr>
+                        <tr>
+                             
+                                <td> <input type="text" name="I01" id="inercia" value="Hw" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="I01" id="hw"  style="width:95px; height: 25px;" value="45.00"> [cm]</td>
+                               
+                                
+                        </tr>
+                       
+                        <tr>
+                                <td> <input type="text" name="I01" id="inercia" value="Tw" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="A01" id="tw"  style="width:95px; height: 25px;" value="15.00"> [cm]</td>
+                                
+                                
+                        </tr>
+                      
+                    </tbody>
+                </table>
+                <br>
+                <table>
+                    <tbody>
+                            <tr>
+                                <th colspan="1" >H-Section</th>
+                                <th colspan="2">id
+
+                                    <select id="idSec" name="" style="width: 35px; height:25px;">
+                                        <option value="0" style="text-align: center">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3" selected="selected">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                    <button id="aplicarSecao" value="3" style="width:50px; height:25px; text-align: center;">Apply</button>
+                                </th>
+                            </tr>
+
+                    
+                        <tr>
+                                
+                            <td rowspan="6"><img src="imgs/perfili.jpg" alt=""> </td>
+                        </tr>
+                      
+                        <tr>    
+                                <td> <input type="text" name="I01" id="inercia" value="M" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                 <td>
+                                        <select id="matType3" name="" style="width:127px; height: 25px;">
+                                            <option value="200000">Steel</option>
+                                            <option value="acoMR">Wood</option>
+                                            <option value="concretoC20">Concrete C20</option>
+                                            <option value="ConcretoC25">Concrete C25</option> 
+                                      </select>
+                                    </td>   
+                        </tr>
+                        <tr>
+                             
+                                <td> <input type="text" name="I01" id="inercia" value="Bf" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="I01" id="bf1"  style="width:95px; height: 25px;" value = "10.00"> [cm]</td>
+                               
+                                
+                        </tr>
+                       
+                        <tr>
+                                <td> <input type="text" name="I01" id="inercia" value="Tf" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="A01" id="tf1"  style="width:95px; height: 25px;" value = "0.49"> [cm]</td>
+                                
+                                
+                        </tr>
+                        <tr>
+                             
+                                <td> <input type="text" name="I01" id="inercia" value="Hw" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="I01" id="hw1"  style="width:95px; height: 25px;" value="13.80"> [cm]</td>
+                               
+                                
+                        </tr>
+                       
+                        <tr>
+                                <td> <input type="text" name="I01" id="inercia" value="Tw" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="A01" id="tw1"  style="width:95px; height: 25px;" value="0.43"> [cm]</td>
+                                
+                                
+                        </tr>
+                      
+                    </tbody>
+                </table>
+                <br>
+
+                <table>
+                    <tbody>
+                            <tr>
+                                <th colspan="1" id="regangularPipe">Retangular Pipe</th>
+                                <th colspan="2">id
+
+                                    <select id="idSec" name="" style="width: 35px; height:25px;">
+                                        <option value="0" style="text-align: center">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4"selected="selected">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                    <button id="aplicarSecao"  value="4" style="width:50px; height:25px; text-align: center;">Apply</button>
+                                </th>
+                            </tr>
+
+                    
+                        <tr>
+                                
+                            <td rowspan="6"><img src="imgs/retvazado.jpg" alt=""> </td>
+                        </tr>
+                      
+                        <tr>    
+                                <td> <input type="text" name="I01" id="inercia" value="M" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                 <td>
+                                        <select id="matType4" name="" style="width:127px; height: 25px;">
+                                            <option value="200000" default>Steel</option>
+                                            <option value="acoMR">Wood</option>
+                                            <option value="concretoC20">Concrete C20</option>
+                                            <option value="ConcretoC25">Concrete C25</option> 
+                                      </select>
+                                    </td>   
+                        </tr>
+                        <tr>
+                             
+                                <td> <input type="text" name="I01" id="inercia" value="b1" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="I01" id="b1"  style="width:95px; height: 25px;" value = "4.00"> [cm]</td>
+                               
+                                
+                        </tr>
+                       
+                        <tr>
+                                <td> <input type="text" name="I01" id="inercia" value="b2" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="A01" id="b2"  style="width:95px; height: 25px;" value = "6.00"> [cm]</td>
+                                
+                                
+                        </tr>
+                        <tr>
+                             
+                                <td> <input type="text" name="I01" id="inercia" value="t" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                <td> <input type="tel" name="I01" id="t"  style="width:95px; height: 25px;" value="0.48"> [cm]</td>
+                               
+                                
+                        </tr>
+                       
+                       
+                      
+                    </tbody>
+                </table>
+                <br/>
+               
+                   
+                        <table>
+                                <tbody>
+                                        <tr >
+                                                <th colspan="1" >Circular</th>
+                                                <th colspan="2">id
+            
+                                                 <select id="idSec" name="" style="width: 35px; height:25px;">
+                                                        <option value="0" style="text-align: center">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                      </select>
+                                                      <button id="aplicarSecao" value="5" style="width:50px; height:25px; text-align: center;">Apply</button>
+                                                    </th>
+                                            </tr>
+            
+                                
+                                    <tr>
+                                            
+                                        <td rowspan="6"><img src="imgs/circular.jpg" alt=""> </td>
+                                    </tr>
+                                  
+                                    
+                                    <tr>    
+                                            <td> <input type="text" name="I01" id="inercia" value="M" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                             <td>
+                                                    <select id="matType" name="" style="width:127px; height: 25px;">
+                                                        <option value="acoMR">Steel MR250</option>
+                                                        <option value="acoMR">Steel AR350</option>
+                                                        <option value="concretoC20">Concrete C20</option>
+                                                        <option value="ConcretoC25">Concrete C25</option> 
+                                                  </select>
+                                                </td>   
+                                    </tr>
+                                    <tr>
+                                         
+                                            <td> <input type="text" name="I01" id="inercia" value="D" style="width:35px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                            <td> <input type="tel" name="I01" id="inercia"  style="width:95px; height: 25px;"> [cm]</td>
+                                           
+                                            
+                                    </tr>
+                                   
+                                  
+                                    <tr>
+                                          
+                                    </tr>
+                                </tbody>
+                            </table>
+
+            </div>
+        </div>
+    
+        <div id="node" class="tabcontent noSelect" style="display: block;">
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Node <br> id</th>
+                            <th>coord. x <br> [m]</th>
+                            <th>coord. y <br> [m]</th>
+                            <th colspan="2">Repeat Pattern</th>
+                            
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n01" value="1" disabled><br> </td>
+                            <td> <input type="tel" name="cx01" id="posX" value ="0"></td>
+                            <td> <input type="tel" name="cx01" id="posY" value ="0"></td>
+                            <th> 
+                                 <button class="btn btn-outline-dark" type="button" id="repeticoesX" style="height: 30px; width:50px; padding: 0px; margin-left: 10px">
+                                 <span>X <i class="fa fa-long-arrow-right" aria-hidden="true"></i></span></button>
+                            </th>
+                            <th> 
+                                 <button class="btn btn-outline-dark" type="button" id="repeticoesY" style="height: 30px; width:50px; padding: 0px; margin-left: 10px">
+                                 <span>Y <i class="fa fa-long-arrow-up" aria-hidden="true"></i></span></button>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n02" value="2" disabled><br> </td>
+                            <td> <input type="tel" name="cx02" id="posX"></td>
+                            <td> <input type="tel" name="cx02" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n03" value="3" disabled><br> </td>
+                            <td> <input type="tel" name="cx03" id="posX"></td>
+                            <td> <input type="tel" name="cx03" id="posY"></td>
+                       
+                          
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n04" value="4" disabled><br> </td>
+                            <td> <input type="tel" name="cx04" id="posX"></td>
+                            <td> <input type="tel" name="cx04" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n05" value="5" disabled><br> </td>
+                            <td> <input type="tel" name="cx05" id="posX"></td>
+                            <td> <input type="tel" name="cx05" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n06" value="6" disabled><br> </td>
+                            <td> <input type="tel" name="cx06" id="posX"></td>
+                            <td> <input type="tel" name="cx06" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n07" value="7" disabled><br> </td>
+                            <td> <input type="tel" name="cx07" id="posX"></td>
+                            <td> <input type="tel" name="cx07" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n08" value="8" disabled><br> </td>
+                            <td> <input type="tel" name="cx08" id="posX"></td>
+                            <td> <input type="tel" name="cx08" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n09" value="9" disabled><br> </td>
+                            <td> <input type="tel" name="cx09" id="posX"></td>
+                            <td> <input type="tel" name="cx09" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n10" value="10" disabled><br> </td>
+                            <td> <input type="tel" name="cx10" id="posX"></td>
+                            <td> <input type="tel" name="cx10" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n11" value="11" disabled><br> </td>
+                            <td> <input type="tel" name="cx11" id="posX"></td>
+                            <td> <input type="tel" name="cx11" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n12" value="12" disabled><br> </td>
+                            <td> <input type="tel" name="cx12" id="posX"></td>
+                            <td> <input type="tel" name="cx12" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n13" value="13" disabled><br> </td>
+                            <td> <input type="tel" name="cx13" id="posX"></td>
+                            <td> <input type="tel" name="cx13" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n14" value="14" disabled><br> </td>
+                            <td> <input type="tel" name="cx14" id="posX"></td>
+                            <td> <input type="tel" name="cx14" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n15" value="15" disabled><br> </td>
+                            <td> <input type="tel" name="cx15" id="posX"></td>
+                            <td> <input type="tel" name="cx15" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n16" value="16" disabled><br> </td>
+                            <td> <input type="tel" name="cx16" id="posX"></td>
+                            <td> <input type="tel" name="cx16" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n17" value="17" disabled><br> </td>
+                            <td> <input type="tel" name="cx17" id="posX"></td>
+                            <td> <input type="tel" name="cx17" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n18" value="18" disabled><br> </td>
+                            <td> <input type="tel" name="cx18" id="posX"></td>
+                            <td> <input type="tel" name="cx18" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n19" value="19" disabled><br> </td>
+                            <td> <input type="tel" name="cx19" id="posX"></td>
+                            <td> <input type="tel" name="cx19" id="posY"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n20" value="20" disabled><br> </td>
+                            <td> <input type="tel" name="cx20" id="posX"></td>
+                            <td> <input type="tel" name="cx20" id="posY"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="barr" class="tabcontent noSelect" style="display: none;">
+            <div >
+                <table >    
+                    <tbody >
+                        <tr style="margin-left:-20">
+                            <th>Bar</th>
+                            <th>Node</th>
+                            <th>Node</th>
+                            <th></th>
+                            <th colspan="2"><span style="margin-top:-5px"><i class="fa fa-crosshairs" aria-hidden="true"></i></span><input type="checkbox" id="trel" class="rest" style="margin-left: 5px; margin-top:15px"></th>
+                            <th colspan="3"style="margin-left: 5px"> <label class="switch"><input id="autocompletar" type="checkbox" style="margin-left: 50px"><span class="slider round"></span></label></th>     
+                        </tr>
+                        <tr>
+                            <th>id </th>
+                            <th>i</th>
+                            <th>f</th>
+                            <th>Section</th>
+                            <th style="margin-left: 10px"> &nbsp;Ri </th>
+                            <th style="margin-left: 10px"> &nbsp;Rf </th>
+                            <th style="margin-left: 10px"> &nbsp;iR </th>
+                            <th style="margin-left: 10px"> &nbsp;AR </th>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b01" value="1" disabled><br> </td>
+                            <td> <input type="tel" name="noi01" id="noInicial"></td>
+                            <td> <input type="tel" name="noj01" id="noFinal"> </td>
+                            <td> <input type="tel" name="pro01" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                            
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b02" value="2" disabled><br> </td>
+                            <td> <input type="tel" name="noi02" id="noInicial"></td>
+                            <td> <input type="tel" name="noj02" id="noFinal"></td>
+                            <td> <input type="tel" name="pro02" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b03" value="3" disabled><br> </td>
+                            <td> <input type="tel" name="noi03" id="noInicial"></td>
+                            <td> <input type="tel" name="noj03" id="noFinal"></td>
+                            <td> <input type="tel" name="pro03" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b04" value="4" disabled><br> </td>
+                            <td> <input type="tel" name="noi04" id="noInicial"></td>
+                            <td> <input type="tel" name="noj04" id="noFinal"></td>
+                            <td> <input type="tel" name="pro04" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b05" value="5" disabled><br> </td>
+                            <td> <input type="tel" name="noi05" id="noInicial"></td>
+                            <td> <input type="tel" name="noj05" id="noFinal"></td>
+                            <td> <input type="tel" name="pro05" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b06" value="6" disabled><br> </td>
+                            <td> <input type="tel" name="noi06" id="noInicial"></td>
+                            <td> <input type="tel" name="noj06" id="noFinal"></td>
+                            <td> <input type="tel" name="pro06" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b07" value="7" disabled><br> </td>
+                            <td> <input type="tel" name="noi07" id="noInicial"></td>
+                            <td> <input type="tel" name="noj07" id="noFinal"></td>
+                            <td> <input type="tel" name="pro07" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b08" value="8" disabled><br> </td>
+                            <td> <input type="tel" name="noi08" id="noInicial"></td>
+                            <td> <input type="tel" name="noj08" id="noFinal"></td>
+                            <td> <input type="tel" name="pro08" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b09" value="9" disabled><br> </td>
+                            <td> <input type="tel" name="noi09" id="noInicial"></td>
+                            <td> <input type="tel" name="noj09" id="noFinal"></td>
+                            <td> <input type="tel" name="pro09" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b10" value="10" disabled><br> </td>
+                            <td> <input type="tel" name="noi10" id="noInicial"></td>
+                            <td> <input type="tel" name="noj10" id="noFinal"></td>
+                            <td> <input type="tel" name="pro10" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b11" value="11" disabled><br> </td>
+                            <td> <input type="tel" name="noi11" id="noInicial"></td>
+                            <td> <input type="tel" name="noj11" id="noFinal"></td>
+                            <td> <input type="tel" name="pro11" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b12" value="12" disabled><br> </td>
+                            <td> <input type="tel" name="noi12" id="noInicial"></td>
+                            <td> <input type="tel" name="noj12" id="noFinal"></td>
+                            <td> <input type="tel" name="pro12" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b13" value="13" disabled><br> </td>
+                            <td> <input type="tel" name="noi13" id="noInicial"></td>
+                            <td> <input type="tel" name="noj13" id="noFinal"></td>
+                            <td> <input type="tel" name="pro13" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b14" value="14" disabled><br> </td>
+                            <td> <input type="tel" name="noi14" id="noInicial"></td>
+                            <td> <input type="tel" name="noj14" id="noFinal"></td>
+                            <td> <input type="tel" name="pro14" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b15" value="15" disabled><br> </td>
+                            <td> <input type="tel" name="noi15" id="noInicial"></td>
+                            <td> <input type="tel" name="noj15" id="noFinal"></td>
+                            <td> <input type="tel" name="pro15" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b16" value="16" disabled><br> </td>
+                            <td> <input type="tel" name="noi16" id="noInicial"></td>
+                            <td> <input type="tel" name="noj16" id="noFinal"></td>
+                            <td> <input type="tel" name="pro16" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b17" value="17" disabled><br> </td>
+                            <td> <input type="tel" name="noi17" id="noInicial"></td>
+                            <td> <input type="tel" name="noj17" id="noFinal"></td>
+                            <td> <input type="tel" name="pro17" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b18" value="18" disabled><br> </td>
+                            <td> <input type="tel" name="noi18" id="noInicial"></td>
+                            <td> <input type="tel" name="noj18" id="noFinal"></td>
+                            <td> <input type="tel" name="pro18" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b19" value="19" disabled><br> </td>
+                            <td> <input type="tel" name="noi19" id="noInicial"></td>
+                            <td> <input type="tel" name="noj19" id="noFinal"></td>
+                            <td> <input type="tel" name="pro19" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b20" value="20" disabled><br> </td>
+                            <td> <input type="tel" name="noi20" id="noInicial"></td>
+                            <td> <input type="tel" name="noj20" id="noFinal"></td>
+                            <td> <input type="tel" name="pro20" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b21" value="21" disabled><br> </td>
+                            <td> <input type="tel" name="noi21" id="noInicial"></td>
+                            <td> <input type="tel" name="noj21" id="noFinal"></td>
+                            <td> <input type="tel" name="pro21" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b22" value="22" disabled><br> </td>
+                            <td> <input type="tel" name="noi22" id="noInicial"></td>
+                            <td> <input type="tel" name="noj22" id="noFinal"></td>
+                            <td> <input type="tel" name="pro22" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b23" value="23" disabled><br> </td>
+                            <td> <input type="tel" name="noi23" id="noInicial"></td>
+                            <td> <input type="tel" name="noj23" id="noFinal"></td>
+                            <td> <input type="tel" name="pro23" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b24" value="24" disabled><br> </td>
+                            <td> <input type="tel" name="noi24" id="noInicial"></td>
+                            <td> <input type="tel" name="noj24" id="noFinal"></td>
+                            <td> <input type="tel" name="pro24" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="b25" value="25" disabled><br> </td>
+                            <td> <input type="tel" name="noi25" id="noInicial"></td>
+                            <td> <input type="tel" name="noj25" id="noFinal"></td>
+                            <td> <input type="tel" name="pro25" id="sec"></td>
+                            <td> <input type="checkbox" id="ri" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="rf" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ir" class="rest" style="margin-left: 8px"></td>
+                            <td> <input type="checkbox" id="ar" class="rest" style="margin-left: 8px"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+        <div id="rest" class="tabcontent noSelect" style="display: none;">
+
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Node</th>
+                            <th colspan="3">Restrains</th>
+                            <th colspan="3">&nbsp;Prescritions [m]</th>
+                        </tr>
+                        <tr>
+                            <th>id</th>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>M</th>
+                            <th>Dx</th>
+                            <th>Dy</th>
+                            <th>Mz</th>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n01" value="1" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox" name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox" name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox" name="restmz" style="margin-left: 4px"></td>
+                            <td> <input class="restbox" type="text" name="dx1" id="dx" disabled></td>
+                            <td> <input class="restbox" type="text" name="dy1" id="dy" disabled></td>
+                            <td> <input class="restbox" type="text" name="rz1" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n02" value="2" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox" name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox" name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox" name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx2" id="dx" disabled></td>
+                            <td> <input type="text" name="dy2" id="dy" disabled></td>
+                            <td> <input type="text" name="rz2" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n03" value="3" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox" name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox" name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox" name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx3" id="dx" disabled></td>
+                            <td> <input type="text" name="dy3" id="dy" disabled></td>
+                            <td> <input type="text" name="rz3" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n04" value="4" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx4" id="dx" disabled></td>
+                            <td> <input type="text" name="dy4" id="dy" disabled></td>
+                            <td> <input type="text" name="rz4" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n05" value="5" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx5" id="dx" disabled></td>
+                            <td> <input type="text" name="dy5" id="dy" disabled></td>
+                            <td> <input type="text" name="rz5" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n06" value="6" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx6" id="dx" disabled></td>
+                            <td> <input type="text" name="dy6" id="dy" disabled></td>
+                            <td> <input type="text" name="rz6" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n07" value="7" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx7" id="dx" disabled></td>
+                            <td> <input type="text" name="dy7" id="dy" disabled></td>
+                            <td> <input type="text" name="rz7" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n08" value="8" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx8" id="dx" disabled></td>
+                            <td> <input type="text" name="dy8" id="dx" disabled></td>
+                            <td> <input type="text" name="rz8" id="dx" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n09" value="9" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx9" id="dx" disabled></td>
+                            <td> <input type="text" name="dy9" id="dy" disabled></td>
+                            <td> <input type="text" name="rz9" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n10" value="10" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx10" id="dx" disabled></td>
+                            <td> <input type="text" name="dy10" id="dy" disabled></td>
+                            <td> <input type="text" name="rz10" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n11" value="11" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx11" id="dx" disabled></td>
+                            <td> <input type="text" name="dy11" id="dy" disabled></td>
+                            <td> <input type="text" name="rz11" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n12" value="12" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx12" id="dx" disabled></td>
+                            <td> <input type="text" name="dy12" id="dy" disabled></td>
+                            <td> <input type="text" name="rz12" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n13" value="13" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx13" id="dx" disabled></td>
+                            <td> <input type="text" name="dy13" id="dy" disabled></td>
+                            <td> <input type="text" name="rz13" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n14" value="14" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx14" name="dx"  id="dx" disabled></td>
+                            <td> <input type="text" name="dy14" name="dy" id="dy" disabled></td>
+                            <td> <input type="text" name="rz14" name="rz" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n15" value="15" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx15" name="dx" id="dx" disabled></td>
+                            <td> <input type="text" name="dy15" name="dy"  id="dy" disabled></td>
+                            <td> <input type="text" name="rz15" name="rz" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n16" value="16" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx16" name="dx" id="dx" disabled></td>
+                            <td> <input type="text" name="dy16" name="dy" id="dy" disabled></td>
+                            <td> <input type="text" name="rz16" name="rz"  id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n17" value="17" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx17" name="dx" id="dx" disabled></td>
+                            <td> <input type="text" name="dy17" name="dy" id="dy" disabled></td>
+                            <td> <input type="text" name="rz17" name="rz"   id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n18" value="18" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx18" name="dx" id="dx" disabled></td>
+                            <td> <input type="text" name="dy18" name="dy" id="dy" disabled></td>
+                            <td> <input type="text" name="rz18" name="rz" id="rz" disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n19" value="19" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx19" name="dx"  id="dx" disabled></td>
+                            <td> <input type="text" name="dy19" name="dy"  id="dy" disabled></td>
+                            <td> <input type="text" name="rz19" name="rz"  id="rz"disabled></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n20" value="20" disabled><br> </td>
+                            <td> <input type="checkbox" id="restbox"  name="restdx" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restdy" style="margin-left: 4px"></td>
+                            <td> <input type="checkbox" id="restbox"  name="restmz" style="margin-left: 4px"></td>
+                            <td> <input type="text" name="dx20" name="dx"  id="dx" disabled></td>
+                            <td> <input type="text" name="dy20" name="dy"  id="dy"  disabled></td>
+                            <td> <input type="text" name="rz20" name="rz"  id="rz" disabled></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="cgnd" class="tabcontent noSelect" style="display: none;">
+               <button class="btn btn-outline-dark" type="button" id="quickInputCargasNodais" style="height: 35px; width:50px; margin-top: -2px; margin-left: 230px"data-toggle="collapse" data-target="#quickInputForcasNodais" aria-expanded="false" aria-controls="quickInputForcasNodais">
+                    <span style="margin: -7px 0px 0px -7px; text-align: center;" ><i class="fa fa-sort-numeric-asc"aria-hidden="true"></i></span>
+               </button>
+               
+               <div class="collapse" id="quickInputForcasNodais" style="margin-bottom: 20px; margin-top: 5px">
+                 <div class="card card-body">
+                         <table>
+                                <tbody>
+                                     <tr>
+                                        <th></th>
+                                        <th >fx</th>
+                                        <th >fy</th>
+                                        <th>Mz</th>   
+                                     </tr>
+                                     <tr>
+                                         <th>Nodes</th>
+                                         <th>[kN]</th>
+                                         <th>[kN]</th>
+                                         <th>[kN·m]</th>
+                                     </tr>
+                                     <tr>
+                                         <td> <input type="text" name="xi" id="forcasNos" style="width: 80px" placeholder="1,2,5,7..."></td>
+                                         <td> <input type="text" name="FX" id="fxm"></td>
+                                         <td> <input type="text" name="FY" id="fym"></td>
+                                         <td> <input type="text" name="MZ" id="mzm"></td>
+                                     </tr>
+                                 </tbody>
+                            </table>
+                         <button class="btn btn-secondary" type="button" id="aplicarCargasNodais" style="width: 70px; height: 38px; margin-left: 85px; margin-top: 10px;"data-toggle="collapse" data-target="#quickInputForcasNodais" aria-expanded="false" aria-controls="quickInputForcasNodais">
+                               Apply
+                         </button>
+                     
+                 </div>
+               </div>
+            <div style="margin-top: -15px">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Node <br> id </th>
+                            <th>Fx <br> [kN] </th>
+                            <th>Fy <br> [kN] </th>
+                            <th>Mz <br> [kN·m] </th>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n01" value="1" disabled><br> </td>
+                            <td> <input type="text" name="fx01" id="fx"></td>
+                            <td> <input type="text" name="fy01" id="fy"></td>
+                            <td> <input type="text" name="mz01" id="mz" ></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n02" value="2" disabled><br> </td>
+                            <td> <input type="text" name="fx02" id="fx"></td>
+                            <td> <input type="text" name="fy02" id="fy"></td>
+                            <td> <input type="text" name="mz02" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n03" value="3" disabled><br> </td>
+                            <td> <input type="text" name="fx03" id="fx"></td>
+                            <td> <input type="text" name="fy03" id="fy"></td>
+                            <td> <input type="text" name="mz03" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n04" value="4" disabled><br> </td>
+                            <td> <input type="text" name="fx04" id="fx"></td>
+                            <td> <input type="text" name="fy04" id="fy"></td>
+                            <td> <input type="text" name="mz04" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n05" value="5" disabled><br> </td>
+                            <td> <input type="text" name="fx05" id="fx"></td>
+                            <td> <input type="text" name="fy05" id="fy"></td>
+                            <td> <input type="text" name="mz05" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n06" value="6" disabled><br> </td>
+                            <td> <input type="text" name="fx06" id="fx"></td>
+                            <td> <input type="text" name="fy06" id="fy"></td>
+                            <td> <input type="text" name="mz06" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n07" value="7" disabled><br> </td>
+                            <td> <input type="text" name="fx07" id="fx"></td>
+                            <td> <input type="text" name="fy07" id="fy"></td>
+                            <td> <input type="text" name="mz07" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n08" value="8" disabled><br> </td>
+                            <td> <input type="text" name="fx08" id="fx"></td>
+                            <td> <input type="text" name="fy08" id="fy"></td>
+                            <td> <input type="text" name="mz08" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n09" value="9" disabled><br> </td>
+                            <td> <input type="text" name="fx09" id="fx"></td>
+                            <td> <input type="text" name="fy09" id="fy"></td>
+                            <td> <input type="text" name="mz09" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n10" value="10" disabled><br> </td>
+                            <td> <input type="text" name="fx10" id="fx"></td>
+                            <td> <input type="text" name="fy10" id="fy"></td>
+                            <td> <input type="text" name="mz10" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n11" value="11" disabled><br> </td>
+                            <td> <input type="text" name="fx11" id="fx"></td>
+                            <td> <input type="text" name="fy11" id="fy"></td>
+                            <td> <input type="text" name="mz11" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n12" value="12" disabled><br> </td>
+                            <td> <input type="text" name="fx12" id="fx"></td>
+                            <td> <input type="text" name="fy12" id="fy"></td>
+                            <td> <input type="text" name="mz12" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n13" value="13" disabled><br> </td>
+                            <td> <input type="text" name="fx13" id="fx"></td>
+                            <td> <input type="text" name="fy13" id="fy"></td>
+                            <td> <input type="text" name="mz13" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n14" value="14" disabled><br> </td>
+                            <td> <input type="text" name="fx14" id="fx"></td>
+                            <td> <input type="text" name="fy14" id="fy"></td>
+                            <td> <input type="text" name="mz14" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n15" value="15" disabled><br> </td>
+                            <td> <input type="text" name="fx15" id="fx"></td>
+                            <td> <input type="text" name="fy15" id="fy"></td>
+                            <td> <input type="text" name="mz15" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n16" value="16" disabled><br> </td>
+                            <td> <input type="text" name="fx16" id="fx"></td>
+                            <td> <input type="text" name="fy16" id="fy"></td>
+                            <td> <input type="text" name="mz16" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n17" value="17" disabled><br> </td>
+                            <td> <input type="text" name="fx17" id="fx"></td>
+                            <td> <input type="text" name="fy17" id="fy"></td>
+                            <td> <input type="text" name="mz17" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n18" value="18" disabled><br> </td>
+                            <td> <input type="text" name="fx18" id="fx"></td>
+                            <td> <input type="text" name="fy18" id="fy"></td>
+                            <td> <input type="text" name="mz18" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n19" value="19" disabled><br> </td>
+                            <td> <input type="text" name="fx19" id="fx"></td>
+                            <td> <input type="text" name="fy19" id="fy"></td>
+                            <td> <input type="text" name="mz19" id="mz"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="text" name="n20" value="20" disabled><br> </td>
+                            <td> <input type="text" name="fx20" id="fx"></td>
+                            <td> <input type="text" name="fy20" id="fy"></td>
+                            <td> <input type="text" name="mz20" id="mz"></td>
+                        </tr>
+                   </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="cgdi" class="tabcontent noSelect" style="display: none;">
+                        
+                        <button class="btn btn-outline-dark" type="button" id="baseOrtogonal" style="height: 35px; width:50px;  margin-top: -2px; margin-left: 230px" data-toggle="collapse" data-target="#quickInputDist" aria-expanded="false" aria-controls="quickInputDist">
+                               <span style="margin: -7px 0px 0px -7px; text-align: center;" > <i class="fa fa-long-arrow-down" style="position:relative; top:1px" aria-hidden="true"></i><i class="fa fa-long-arrow-down" style="position:relative; top:1px" aria-hidden="true"></i><i class="fa fa-sort-numeric-asc"aria-hidden="true"></i></span>
+                        </button>
+                      
+                      <div class="collapse" id="quickInputDist">
+                        <div class="card card-body" style="margin-top: 5px; margin-bottom: 20px">
+                                <table>
+                                        <tbody>
+                                                <tr>
+                                                        <th></th>
+                                                        <th >qyi</th>
+                                                        <th >qyf</th>
+                                                        <th></th>
+                                                        
+                                                    
+                                                        
+                                                </tr>
+                                            <tr>
+                                                <th>Bars</th>
+                                                <th>[kN/m]</th>
+                                                <th>[kN/m]</th>
+                                                <th>GB</th>
+                                            
+    
+                                               
+                            
+                                            </tr>
+                                            <tr>
+                                                <td> <input type="text" name="xi" id="qyBarras" style="width: 80px" placeholder="1,2,5,7..."></td>                                       
+                                                <td> <input type="text" name="qyiM" id="QyiM"></td>
+                                                <td> <input type="text" name="qyfM" id="QyfM"></td>
+                                               
+                                                <td> <input type="checkbox" id="gby" class="rest" style="margin-left: 6px"></td>
+                                            </tr>
+                                            <tr>
+                                                    <th></th>
+                                                    <th >qxi</th>
+                                                    <th >qxf</th>
+                                                    <th></th>
+                                                    
+                                                
+                                                    
+                                            </tr>
+                                        <tr>
+                                                <th>Bars</th>
+                                            <th>[kN/m]</th>
+                                            <th>[kN/m]</th>
+                                           
+                                           
+                                            <th>GB</th>
+                                        
+                                            </th>
+                                           
+                        
+                                        </tr>
+                                        <tr>
+                                            <td> <input type="text" name="yi02" id="qxBarras" style="width: 80px" placeholder="1,2,5,7..."></td>
+                                            <td> <input type="text" name="qxi" id="QxiM"></td>
+                                            <td> <input type="text" name="qxf" id="QxfM"></td>
+                                            <td> <input type="checkbox" id="gbx" class="rest" style="margin-left: 6px"></td>
+                                        </tr>
+                                            
+                                        </tbody>
+                                </table>
+                                <button class="btn btn-secondary" type="button" id="aplicarDistBarras" style="width: 70px; height: 38px; margin-left: 85px; margin-top: 10px;" data-toggle="collapse" data-target="#quickInputDist" aria-expanded="false" aria-controls="quickInputDist">
+                                      Apply
+                                </button>
+                            
+                        </div>
+                      </div>
+             
+            <div style="margin-top: -15px">
+                   
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Bar <br> id</th>
+                            <th>qyi <br> [kN/m] </th>
+                            <th>qyf <br> [kN/m] </th>
+                            <th>qxi <br> [kN/m] </th>
+                            <th>qxf <br> [kN/m] </th>
+                            <th> <br/>&nbsp;GB
+                            </th>
+                           
+        
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b01" value="1" disabled><br> </td>
+                            <td> <input type="text" name="qyi01" id="qyi"></td>
+                            <td> <input type="text" name="qyf01" id="qyf"></td>
+                            <td> <input type="text" name="qxi01" id="qxi"></td>
+                            <td> <input type="text" name="qxf01" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b02" value="2" disabled><br> </td>
+                            <td> <input type="text" name="qyi02" id="qyi"></td>
+                            <td> <input type="text" name="qyj02" id="qyf"></td>
+                            <td> <input type="text" name="qxi02" id="qxi"></td>
+                            <td> <input type="text" name="qxf02" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b03" value="3" disabled><br> </td>
+                            <td> <input type="text" name="qyi03" id="qyi"></td>
+                            <td> <input type="text" name="qyj03" id="qyf"></td>
+                            <td> <input type="text" name="qxi03" id="qxi"></td>
+                            <td> <input type="text" name="qxf03" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b04" value="4" disabled><br> </td>
+                            <td> <input type="text" name="qyi04" id="qyi"></td>
+                            <td> <input type="text" name="qyj04" id="qyf"></td>
+                            <td> <input type="text" name="qxi04" id="qxi"></td>
+                            <td> <input type="text" name="qxf04" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b05" value="5" disabled><br> </td>
+                            <td> <input type="text" name="qyi05" id="qyi"></td>
+                            <td> <input type="text" name="qyj05" id="qyf"></td>
+                            <td> <input type="text" name="qxi05" id="qxi"></td>
+                            <td> <input type="text" name="qxf05" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b06" value="6" disabled><br> </td>
+                            <td> <input type="text" name="qyi06" id="qyi"></td>
+                            <td> <input type="text" name="qyj06" id="qyf"></td>
+                            <td> <input type="text" name="qxi06" id="qxi"></td>
+                            <td> <input type="text" name="qxf06" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b07" value="7" disabled><br> </td>
+                            <td> <input type="text" name="qyi07" id="qyi"></td>
+                            <td> <input type="text" name="qyj07" id="qyf"></td>
+                            <td> <input type="text" name="qxi07" id="qxi"></td>
+                            <td> <input type="text" name="qxf07" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b08" value="8" disabled><br> </td>
+                            <td> <input type="text" name="qyi08" id="qyi"></td>
+                            <td> <input type="text" name="qyj08" id="qyf"></td>
+                            <td> <input type="text" name="qxi08" id="qxi"></td>
+                            <td> <input type="text" name="qxf08" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b09" value="9" disabled><br> </td>
+                            <td> <input type="text" name="qyi09" id="qyi"></td>
+                            <td> <input type="text" name="qyj09" id="qyf"></td>
+                            <td> <input type="text" name="qxi09" id="qxi"></td>
+                            <td> <input type="text" name="qxf09" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b10" value="10" disabled><br> </td>
+                            <td> <input type="text" name="qyi10" id="qyi"></td>
+                            <td> <input type="text" name="qyj10" id="qyf"></td>
+                            <td> <input type="text" name="qxi10" id="qxi"></td>
+                            <td> <input type="text" name="qxf10" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b11" value="11" disabled><br> </td>
+                            <td> <input type="text" name="qi11" id="qyi"></td>
+                            <td> <input type="text" name="qj11" id="qyf"></td>
+                            <td> <input type="text" name="qxi11" id="qxi"></td>
+                            <td> <input type="text" name="qxf11" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b12" value="12" disabled><br> </td>
+                            <td> <input type="text" name="qyi12" id="qyi"></td>
+                            <td> <input type="text" name="qyj12" id="qyf"></td>
+                            <td> <input type="text" name="qxi12" id="qxi"></td>
+                            <td> <input type="text" name="qxf12" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b13" value="13" disabled><br> </td>
+                            <td> <input type="text" name="qyi13" id="qyi"></td>
+                            <td> <input type="text" name="qyj13" id="qyf"></td>
+                            <td> <input type="text" name="qxi13" id="qxi"></td>
+                            <td> <input type="text" name="qxf13" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b14" value="14" disabled><br> </td>
+                            <td> <input type="text" name="qyi14" id="qyi"></td>
+                            <td> <input type="text" name="qyj14" id="qyf"></td>
+                            <td> <input type="text" name="qxi14" id="qxi"></td>
+                            <td> <input type="text" name="qxf14" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b15" value="15" disabled><br> </td>
+                            <td> <input type="text" name="qyi15" id="qyi"></td>
+                            <td> <input type="text" name="qyj15" id="qyf"></td>
+                            <td> <input type="text" name="qxi15" id="qxi"></td>
+                            <td> <input type="text" name="qxf15" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b16" value="16" disabled><br> </td>
+                            <td> <input type="text" name="qyi16" id="qyi"></td>
+                            <td> <input type="text" name="qyj16" id="qyf"></td>
+                            <td> <input type="text" name="qxi16" id="qxi"></td>
+                            <td> <input type="text" name="qxf16" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b17" value="17" disabled><br> </td>
+                            <td> <input type="text" name="qyi17" id="qyi"></td>
+                            <td> <input type="text" name="qyj17" id="qyf"></td>
+                            <td> <input type="text" name="qxi17" id="qxi"></td>
+                            <td> <input type="text" name="qxf17" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b18" value="18" disabled><br> </td>
+                            <td> <input type="text" name="qyi18" id="qyi"></td>
+                            <td> <input type="text" name="qyj18" id="qyf"></td>
+                            <td> <input type="text" name="qxi18" id="qxi"></td>
+                            <td> <input type="text" name="qxf18" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b19" value="19" disabled><br> </td>
+                            <td> <input type="text" name="qyi19" id="qyi"></td>
+                            <td> <input type="text" name="qyj19" id="qyf"></td>
+                            <td> <input type="text" name="qxi19" id="qxi"></td>
+                            <td> <input type="text" name="qxf19" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b20" value="20" disabled><br> </td>
+                            <td> <input type="text" name="qyi20" id="qyi"></td>
+                            <td> <input type="text" name="qyj20" id="qyf"></td>
+                            <td> <input type="text" name="qxi20" id="qxi"></td>
+                            <td> <input type="text" name="qxf20" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b21" value="21" disabled><br> </td>
+                            <td> <input type="text" name="qyi21" id="qyi"></td>
+                            <td> <input type="text" name="qyj21" id="qyf"></td>
+                            <td> <input type="text" name="qxi21" id="qxi"></td>
+                            <td> <input type="text" name="qxf21" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b22" value="22" disabled><br> </td>
+                            <td> <input type="text" name="qyi22" id="qyi"></td>
+                            <td> <input type="text" name="qyj22" id="qyf"></td>
+                            <td> <input type="text" name="qxi22" id="qxi"></td>
+                            <td> <input type="text" name="qxf22" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b23" value="23" disabled><br> </td>
+                            <td> <input type="text" name="qyi23" id="qyi"></td>
+                            <td> <input type="text" name="qyj23" id="qyf"></td>
+                            <td> <input type="text" name="qxi23" id="qxi"></td>
+                            <td> <input type="text" name="qxf23" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b24" value="24" disabled><br> </td>
+                            <td> <input type="text" name="qyi24" id="qyi"></td>
+                            <td> <input type="text" name="qyj24" id="qyf"></td>
+                            <td> <input type="text" name="qxi24" id="qxi"></td>
+                            <td> <input type="text" name="qxf24" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                        <tr>
+                            <td> <input id="indice" type="textIndice" name="b25" value="25" disabled><br> </td>
+                            <td> <input type="text" name="qyi25" id="qyi"></td>
+                            <td> <input type="text" name="qyj25" id="qyf"></td>
+                            <td> <input type="text" name="qxi25" id="qxi"></td>
+                            <td> <input type="text" name="qxf25" id="qxf"></td>
+                            <td> <input type="checkbox" id="gb" class="rest" style="margin-left: 6px"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+        <div id="diag" class="tabcontent noSelect" style="display: none;">
+            <div>
+                <table>
+                        <tbody>
+                            <tr>
+                                    <td><input type="checkbox" id="diagramaDeformacoes" name="plotagem" class="rest" style="margin-left: 8px"></td>
+                                    <td><input style="width:125px" type="text" value="Deformations" disabled></td>
+                                    <td><input type="range" id="escalaFlexa" value="1" min="1" max="151" step="10" style="margin-left: 3px"></td>
+                                    
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="2">
+                                <button>Evaluate</button><input style="width:54px" type="text" placeholder="Bar id">
+                                <input style="width:40px" type="text" placeholder="x"> 
+                                <input style="width:80px" type="text" placeholder="Dx, Dy, Rz" readonly> 
+                               </td>
+                            </tr>
+                        </tbody>
+                      
+                </table>
+                <br/>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" id="diagramaCortante" name="plotagem" class="rest" style="margin-left: 8px"></td>
+                            <td><input style="width:125px" type="text" value="Shear Force" disabled></td>
+                            <td><input type="range" id="escalaCortante" value="1" min="1" max="91" step="10"  style="margin-left: 3px"></td>
+                        </tr>
+                        <tr>
+                                <td></td>
+                                <td colspan="2">
+                                <button>Evaluate</button><input style="width:54px" type="text" placeholder="Bar id">
+                                <input style="width:40px" type="tel" placeholder="x"> 
+                                <input style="width:80px" type="text" placeholder="V(x)" readonly> 
+                               </td>
+                               </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br/>
+                  <table>
+                      <tbody>
+                        <tr>
+                            <td> <input type="checkbox" id="diagramaMomento" name="plotagem" class="rest" style="margin-left: 8px"></td>
+                            <td> <input style="width:125px" type="text" value="Bending Moment" disabled></td>
+                            <td><input type="range" id="escalaMomento" value="1" min="1" max="91" step="10"  style="margin-left: 3px"></td>
+                        </tr>
+                 
+                  
+                        <tr>
+                                <td></td>
+                                <td colspan="2">
+                                <button>Evaluate</button><input style="width:54px" type="text" placeholder="Bar id">
+                                <input style="width:40px" type="tel" placeholder="x"> 
+                                <input style="width:80px" type="text" placeholder="M(x)" readonly> 
+                               </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                    <br/>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td> <input type="checkbox" id="diagramaAxial" name="plotagem" class="rest" style="margin-left: 8px"></td>
+                            <td> <input style="width:125px" type="text" value="Axial Force" disabled></td>
+                            <td><input type="range" id="escalaAxial" value="1" min="1" max="91" step="10"  style="margin-left: 3px"></td>
+                        </tr>
+                        <tr>
+                                <td></td>
+                                <td colspan="2">
+                                <button>Evaluate</button><input style="width:54px" type="text" placeholder="Bar id">
+                                <input style="width:40px" type="tel" placeholder="x"> 
+                                <input style="width:80px" type="text" placeholder="N(x)" readonly> 
+                               </td>
+                            </tbody>
+                        </tr>
+                    </table>
+                    <br/>
+                        
+                   
+                  
+
+                    <table>
+                        <tbody>
+                        
+                        <tr>
+                            <td> <input type="checkbox" id="mostrarSolucao" name="plotagem" style="margin-left: 8px"></td>
+                            <td> <input style="width:130px"  type="text" value="Show Solution" disabled><br> </td>
+                          
+                         
+                        </tr>
+                        <tr>
+                            <td> <input type="checkbox" id="mostrarBarras" name="plotagem" style="margin-left: 8px" checked></td>
+                            <td> <input style="width:130px"  type="text" value="Show Bars" disabled><br> </td>
+                        
+                           
+                           
+                        </tr>
+                        <tr>
+                                <td> <input type="checkbox" id="mostrarCarregamentos" name="plotagem" style="margin-left: 8px" checked></td>
+                            <td> <input style="width:130px"  type="text" value="Show Loads" disabled><br> </td>
+                           
+                           
+                           
+                        </tr>
+                        <tr>
+                                <td> <input type="checkbox" id="mostrarApoios" name="plotagem" style="margin-left: 8px" checked></td>
+                            <td> <input style="width:130px"  type="text" value="Show Restrictions" disabled><br> </td>
+                          
+                           
+                           
+                        </tr>
+                       
+                    
+                    
+                    </tbody>
+                </table>
+
+               
+            </div>
+        </div>
+    
+        <div id="rel" class="tabcontent noSelect"  style="width: 100%;" >
+                
+                        <button class="btn btn-info btn-sm" id="gerarPdf" style="margin-left: 15px"><i class="fa fa-floppy-o" aria-hidden="true"></i>  Download Solution Report</button>
+                        <h1 style="font-size: 15pt; text-align: center">Solution Report</h1>
+
+                        <div id="construcao">
+                            
+                        <table>
+                                <tbody id="resDeslocamentos">
+                                    <tr>
+                                        <th colspan="4">Nodal displacements</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Node </th>
+                                        <th>Dx [mm]</th>
+                                        <th>Dy [mm]</th>
+                                        <th>Rz [rad]</th>
+                                    </tr>
+                                </tbody>
+                        </table>
+                        <table>
+                                <tbody id="idgl">
+                                    <tr>
+                                        <th colspan="4">IDL</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Node</th>
+                                        <th>X</th>
+                                        <th>Y</th>
+                                        <th>Z</th>
+                                    </tr>
+                                </tbody>
+                        </table>
+        
+                        <table>
+                                <tbody id="reacoesApoio">
+                                    <tr>
+                                        <th colspan="2">Restrictions</th>
+                                    </tr>
+                                    <tr>
+                                        <th>IDGL</th>
+                                        <th>Kn/Kn·m</th>
+                                    </tr>
+                                </tbody>
+                        </table>
+
+                        <table>
+                                <tbody id="esforcoBarras">
+                                    <tr>
+                                        <th colspan="4">Internal Forces</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Bar</th>
+                                        <th>N [kN]</th>
+                                        <th>V [kN]</th>
+                                        <th>M [kN·m]</th>
+                                    </tr>
+                                </tbody>
+                        </table>
+
+                       
+
+                    
+                        </div>    
+        </div>  
+
+        <div id="iterator" class="tabcontent noSelect" style="display: none;">
+
+         
+            <div>
+                    <table>
+                            <tbody>
+                                    <tr >
+                                            <th id="retangular">Rectangular</th>
+                                            <th>id
+                                             <th><select id="idSecIterator1" name="" style="width: 35px;height:25px;">
+                                                    <option value="0" style="text-align: center">0</option>
+                                                    <option value="1" selected="selected">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                                </th>
+                                              
+                                        </tr>
+        
+                            
+                                <tr>
+                                        
+                                    <td rowspan="4"><img src="imgs/retangular.jpg" alt="" style="width: 80px"> </td>
+                                </tr>
+                              
+                                <tr>    
+                                    <td> <input type="text" name="I01" id="inercia" value="M" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                    <td colspan="2">
+                                        <select id="matType1" name="" style="width:127px; height: 25px;">
+                                              
+                                                <option value="concretoC20">Concrete C20</option>
+                                                <option id="C25" value="28000" selected="selected">Concrete C25</option> 
+                                                <option value="acoMR">Steel</option>
+                                                <option value="acoMR">Wood</option>
+                                                
+                                               
+                                        </select>
+                                    </td>   
+                                </tr>
+                                <tr>
+                                    <td> <input type="text" value="B[cm]" style="width:48px; height: 25px; font-weight: 600; color: #000;" disabled></td>
+                                    <td> <input type="tel" name="retBase1" id="retBase"  style="width:42px; height: 25px;" value="20.00"></td>  
+                                    <td><input type="range" name="incrementos" id="incrementoBaseRet1" value="0" min="0" max="15" step="1" style="width: 100px"></td>         
+                                </tr>
+                               
+                                <tr>
+                                    <td> <input type="text" name="H" value="H[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                    <td> <input type="tel" name="retAltura1" id="retAltura"  style="width:42px; height: 25.00px;" value="45.00"></td>
+                                    <td><input type="range" name="incrementos" id="incrementoAlturaRet1" value="0" min="0" max="15" step="1" style="width: 100px"></td>            
+                                </tr>
+                                <tr>
+                                      
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <table>
+                            <tbody>
+                                    <tr >
+                                            <th>T-Section</th>
+                                            <th colspan="2">id
+        
+                                             <select id="idSec" name="" style="width: 35px;height:25px;">
+                                                    <option value="0" style="text-align: center">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2"  selected="selected">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                  </select>
+                                            </th>
+                                        </tr>
+        
+                            
+                                <tr>
+                                        
+                                    <td rowspan="6"><img src="imgs/perfilt.jpg" alt="" style="width: 80px;;"> </td>
+                                </tr>
+                              
+                                <tr>    
+                                        <td> <input type="text" name="I01" id="inercia" value="M" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                         <td colspan="2">
+                                                <select id="matType2" name="" style="width:127px; height: 25px;">
+                                                    <option value="concretoC20">Concrete C20</option>
+                                                    <option value="28000" selected="selected">Concrete C25</option>
+                                                    <option value="acoMR">Steel MR250</option>
+                                                    <option value="acoMR">Steel AR350</option>
+                                              </select>
+                                            </td>   
+                                </tr>
+                                <tr>
+                                     
+                                        <td> <input type="tel" name="I01" id="inercia" value="Bf[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="I01" id="bf"  style="width:42px; height: 25px;" value="60.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                       
+                                        
+                                </tr>
+                               
+                                <tr>
+                                        <td> <input type="tel" name="I01" id="inercia" value="Tf[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="A01" id="tf"  style="width:42px; height: 25px;" value="12.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                        
+                                        
+                                </tr>
+                                <tr>
+                                     
+                                        <td> <input type="tel" name="I01" id="inercia" value="Hw[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="I01" id="hw"  style="width:42px; height: 25px;" value="45.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                       
+                                        
+                                </tr>
+                               
+                                <tr>
+                                        <td> <input type="tel" name="I01" id="inercia" value="Tw[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="A01" id="tw"  style="width:42px; height: 25px;" value="15.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                        
+                                        
+                                </tr>
+                              
+                            </tbody>
+                        </table>
+                        <br>
+                        <table>
+                            <tbody>
+                                    <tr>
+                                        <th>H-Section</th>
+                                        <th colspan="2">id
+        
+                                            <select id="idSec" name="" style="width: 35px; height:25px;">
+                                                <option value="0" style="text-align: center">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3" selected="selected">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+        
+                            
+                                <tr>
+                                        
+                                    <td rowspan="6"><img src="imgs/perfili.jpg" alt="" style="width: 80px"> </td>
+                                </tr>
+                              
+                                <tr>    
+                                        <td> <input type="text" name="I01" id="inercia" value="M" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                         <td colspan="2">
+                                                <select id="matType3" name="" style="width:127px; height: 25px;">
+                                                    <option value="200000">Steel</option>
+                                                    <option value="acoMR">Wood</option>
+                                                    <option value="concretoC20">Concrete C20</option>
+                                                    <option value="ConcretoC25">Concrete C25</option> 
+                                              </select>
+                                            </td>   
+                                </tr>
+                                <tr>
+                                     
+                                        <td> <input type="tel" name="I01" id="inercia" value="Bf[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="I01" id="bf1"  style="width:42px; height: 25px;" value = "10.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                       
+                                        
+                                </tr>
+                               
+                                <tr>
+                                        <td> <input type="tel" name="I01" id="inercia" value="Tf[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="A01" id="tf1"  style="width:42px; height: 25px;" value = "0.49"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                        
+                                        
+                                </tr>
+                                <tr>
+                                     
+                                        <td> <input type="tel" name="I01" id="inercia" value="Hw[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="I01" id="hw1"  style="width:42px; height: 25px;" value="13.80"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                       
+                                        
+                                </tr>
+                               
+                                <tr>
+                                        <td> <input type="tel" name="I01" id="inercia" value="Tw[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="A01" id="tw1"  style="width:42px; height: 25px;" value="0.43"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                        
+                                        
+                                </tr>
+                              
+                            </tbody>
+                        </table>
+                        <br>
+        
+                        <table>
+                            <tbody>
+                                    <tr>
+                                        <th colspan="1"id="regangularPipe">Retangular Pipe</th>
+                                        <th colspan="2">id
+        
+                                            <select id="idSec" name="" style="width: 35px; height:25px;">
+                                                <option value="0" style="text-align: center">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4"selected="selected">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+        
+                            
+                                <tr>
+                                        
+                                    <td rowspan="6"><img src="imgs/retvazado.jpg" alt="" style="width: 80px"> </td>
+                                </tr>
+                              
+                                <tr>    
+                                        <td> <input type="text" name="I01" id="inercia" value="M" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                         <td colspan="2">
+                                                <select id="matType4" name="" style="width:127px; height: 25px;">
+                                                    <option value="200000" default>Steel</option>
+                                                    <option value="acoMR">Wood</option>
+                                                    <option value="concretoC20">Concrete C20</option>
+                                                    <option value="ConcretoC25">Concrete C25</option> 
+                                              </select>
+                                            </td>   
+                                </tr>
+                                <tr>
+                                     
+                                        <td> <input type="tel" name="I01" id="inercia" value="b1[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="I01" id="b1"  style="width:42px; height: 25px;" value = "4.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                       
+                                        
+                                </tr>
+                               
+                                <tr>
+                                        <td> <input type="tel" name="I01" id="inercia" value="b2[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="A01" id="b2"  style="width:42px; height: 25px;" value = "6.00"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                        
+                                        
+                                </tr>
+                                <tr>
+                                     
+                                        <td> <input type="tel" name="I01" id="inercia" value="t[cm]" style="width:48px; height: 25px;font-weight: 600; color: #000;" disabled></td>
+                                        <td> <input type="tel" name="I01" id="t"  style="width:42px; height: 25px;" value="0.48"></td>
+                                        <td><input type="range" name="incrementos" id="incrementoAltura" value="0" min="0" max="15" step="1" style="width: 100px"></td>
+                                       
+                                        
+                                </tr>
+                               
+                               
+                              
+                            </tbody>
+                        </table>
+                        <br/>
+                       
+            </div>
+        
+           
+        </div> 
+    </div>
+    </div>
+        <div class="container-fluid" id="plotContainer" style="padding-top: 45px"></div>
+
+
+        <div class="container-fluid" id="navContainer">
+             <nav class="navbar fixed-bottom navbar-light" id="navBottom">
+            
+                        <ul class="navbar-nav"  style="display: inline-block;">
+                                <li class="nav-item" id="carregar" style="margin-left:2px"> <a class="navbar-brand" id="zoomOutIcon" href="#"><i class="fa fa-files-o" aria-hidden="true"></i></a></li>
+                                <li class="nav-item" id="salvar" style="margin-left:15px"> <a class="navbar-brand" id="salvar" href="#"><i class="fa fa-floppy-o" aria-hidden="true"></i></i></a></li>
+                                <li class="nav-item" id="print" style="margin-left:15px"> <a class="navbar-brand" id="printIcon" href="#"><i class="fa fa-camera" aria-hidden="true"></i></a></li>
+                                <li class="nav-item" id="zoomIn"> <a class="navbar-brand" id="zoomOutIcon" href="#"><i class="fa fa-minus" aria-hidden="true"></i></a></li>
+                                <li class="nav-item" id="zoomOut" > <a class="navbar-brand" id="zoomInIcon" href="#"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+                        </ul>
+              </nav>
+        </div>
+  
+
+   
+</div>
+
+      <!-- Primeiro jQuery, depois Popper.js, último Bootstrap JS -->
+    <script src="libraries/funcoesSidenavV3.js"></script>
+    <script src="../Controller/observer.js"></script>
+    <script src="../Controller/controller.js"></script>
+    <script src="libraries/ext/plotly-latest.min.js"></script>
+    <script src="libraries/ext/bootstrap\jquery-3.2.1.slim.min.js"></script> 
+    <script src="libraries/ext/bootstrap\popper.min.js"></script>
+    <script src="libraries/ext/bootstrap\bootstrap.min.js"></script>
+     <!-------------------------------------------------------------->
+    <script src="libraries/desenharObjetos.js"></script>
+    <script src="libraries/ext/math.min.js"></script>
+    <script src="../Model/str2dSolver.js"></script>
+    <script src="libraries/ext/html2pdf/html2pdf.bundle.min.js"></script>
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script type="text/javascript" async src="libraries/ext/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
+   
+    
+    <script>
+
+        
+        cadastrarSecoes()// função que verifica entrada de dados de seção e adicionada nas cadastradas
+        let desenhar = {};
+        desenhar = controlePlotagem()
+        let i =0;
+        let observador = new observer();
+    
+        // INÍCIO DA CONFIGURAÇÃO DO PLOTTER USANDO A BIBLIOTECA PLOTLY.JS//
+        //////////// 1º DEFINIMOS AS CONFIGURAÇÕES DO  PLANO CARTESIANO ////////////
+
+        let range = []; // pos 0 = range em x // pos 2 = range em y
+        range.push([-4,8], [-2,8]);
+
+        var layout = {//CONFIGURAÇÕES GERAIS DO PLANO CARTESIANO
+            showlegend: false,
+            legend: {"orientation": "h"},
+            dragmode: 'pan',
+            hovermode:'closest',
+            margin: {
+                l: 18,
+                r: 4,
+                b: 25,
+                t: 0,
+                pad: 0
+            },
+            xaxis: {//CONFIGURAÇÕES PARA O EIXO X
+                type: 'linear',
+                tickmode: 'linear',
+                range: range[0],
+                gridwidth: 1,
+                gridcolor: '#E6E6E6',
+                autotick: true ,
+                ticks: 'outside',
+                tick0: 0,
+                dtick: 1,
+                ticklen: 8,
+                tickwidth: 2,
+                tickcolor: '#000',
+                autorange: false,
+                fixedrange: false,
+                tickangle: 0,
+            },
+            yaxis: { //CONFIGURAÇÕES PARA O EIXO Y
+                type: 'linear',
+                tickmode: 'linear',
+                range: range[1],
+                scaleanchor: "x",
+                gridwidth: 1,
+                gridcolor: '#E6E6E6',
+                autotick: true,
+                ticks: 'outside',
+                tick0: 0,
+                dtick: 1,
+                ticklen: 8,
+                tickwidth: 2,
+                tickcolor: '#000',
+                autorange: false,
+                fixedrange: false,
+            
+            },
+            shapes:[]
+        }
+        var defaultPlotlyConfiguration = { //CONFIGURAÇÕES DAS FUNCIONALIDADES DA BIBLIOTECA PLOTLY
+            modeBarButtonsToRemove: ['toggleSpikelines', 'select2d','zoom2d','lasso2d', 'sendDataToCloud', 'hoverClosestCartesian', 'hoverCompareCartesian', 'pan2d','resetScale2d'],  
+            displayModeBar: false,
+            displaylogo: false, 
+            scrollZoom: true,
+            doubleClick: 'reset+autosize',  
+        };
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////VARIÁVEIS PRIMITIVAS DA BIBLIOTECA PLOTLY QUE CONTROLAM OS OBJETOS QUE SERÃO INSERIDOS NO CANVAS///////////////////////////
+        let d3 = null;
+        let WIDTH_IN_PERCENT_OF_PARENT = null; 
+        let HEIGHT_IN_PERCENT_OF_PARENT = null;
+        let gd3 = null;
+        let gd = null;
+        let pontos = [];
+        let linhas = [];
+        let shapes = [];
+        let objetosCanvas = [];
+
+        /////////////////////////////VARIÁVEIS QUE RECEBEM A ENTRADA DE DADOS DA INTERFACE
+    
+        let larguraTela = null;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        (function() 
+        { //////////// 2º BRUXARIA RESPONSIVA(JAMAIS MEXER NISSO!!!) PARA CONFIGURAR TAMANHO DO PLANO CARTESIANO DE ACORDO A VIEWPORT//////////////////////
+            larguraTela = document.body.clientWidth;
+            let d3 = Plotly.d3;
+
+            let WIDTH_IN_PERCENT_OF_PARENT = 100,
+                HEIGHT_IN_PERCENT_OF_PARENT = 82;
+
+            let gd3 = d3.select('#plotContainer')
+            .append('div')
+            .style({
+                width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+            
+                height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+                'margin-top': (85 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
+            });
+            
+            gd = gd3.node();
+        
+            Plotly.react(gd, objetosCanvas, layout, defaultPlotlyConfiguration);  //PLOTA UM PLANO CARTESIANO LIMPO
+            
+            window.onresize = function() 
+            {           
+                if( Math.abs(larguraTela - document.body.clientWidth) > 100 )
+                {   //condição para evitar o comportamento da plotly estar sempre tentando replotar os pontos depois de qualquer mudança de tela
+                    larguraTela = document.body.clientWidth;
+                    Plotly.Plots.resize(gd);
+                }
+                
+            };
+            
+        })();
+   
+    </script>
+        
+</body>
+</html> 

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="libraries/math.min.js"></script>
+</head>
+<body>
+
+    <script>
+
+
+        function raizesTerceiroGrau(a, b, c, d)
+        {
+            let f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u;
+            let raizes = [];
+
+            f = parseFloat( ((3*parseFloat(c)/parseFloat(a)) - (Math.pow(parseFloat(b),2) / Math.pow(parseFloat(a),2)))/3);
+
+            g = parseFloat( ( (2*Math.pow(parseFloat(b),3)/Math.pow(parseFloat(a),3)) - (9*parseFloat(b)*parseFloat(c)/Math.pow(parseFloat(a),2)) + (27*parseFloat(d)/parseFloat(a)) )/ 27 );
+            
+            h = parseFloat( (Math.pow(parseFloat(g),2)/4) + (Math.pow(parseFloat(f),3)/27) );
+
+            if( (f==0) && (g==0) && (h==0) )
+            {
+                let x1 = Math.cbrt(d/a)*-1;
+                let x2 = x1;
+                let x3 = x2;
+                raizes.push(x1,x2,x3);
+                return raizes;
+
+            }else if(h <= 0){ /// nesse caso, 3 raizes reais
+              
+                i = math.sqrt( (Math.pow(parseFloat(g) ,2)/4) - parseFloat(h));
+               
+                j = math.cbrt(parseFloat(i));           
+              
+                k = math.acos(-(parseFloat(g)/(2*parseFloat(i))));
+                l = parseFloat(j) * -1;
+                m = math.cos(parseFloat(k)/3);
+                n = math.sqrt(3)*Math.sin(parseFloat(k)/3);
+                p = (parseFloat(b)/(3*parseFloat(a)))*-1;
+                let x1 = 2*parseFloat(j)*Math.cos(parseFloat(k)/3) - (parseFloat(b)/(3*parseFloat(a)));
+                let x2 = parseFloat(l) * parseFloat(m+n) + parseFloat(p);
+                let x3 = parseFloat(l)*parseFloat(m-n)+parseFloat(p);
+                raizes.push(x1,x2,x3);   
+                return raizes;
+
+            }else if (h > 0){
+
+                r = -(parseFloat(g)/2) + parseFloat(Math.sqrt(parseFloat(h))); // pertence cjo reais
+                s = math.cbrt(parseFloat(r));
+                t = -((parseFloat(g)/2)) - parseFloat(Math.sqrt(parseFloat(h)));
+                u = math.cbrt(parseFloat(t));
+                x1 = (parseFloat(s)+parseFloat(u)) - (parseFloat(b)/(3*parseFloat(a)));
+              
+                x2r =  (-(parseFloat(s) + parseFloat(u))/2 - (parseFloat(b)/(3*parseFloat(a))));
+                x2i = parseFloat((parseFloat(s)-parseFloat(u))*Math.sqrt(3)/2);
+                x3r =  (-(parseFloat(s) + parseFloat(u))/2 - (parseFloat(b)/(3*parseFloat(a))));
+                x3i = -parseFloat((parseFloat(s)-parseFloat(u))*Math.sqrt(3)/2);
+                let x2 = math.complex(x2r, x2i);
+                let x3 = math.complex(x3r, x3i); 
+                raizes.push(x1,x2,x3);
+                return raizes;
+            }
+        }
+
+
+        function raizesQuartoGrau(a, b, c, d, e)
+        {
+            let f, g, h;
+            let raizes4grau = [];
+            
+        
+            b = parseFloat(b/a); // somente cjo dos reais
+            c = parseFloat(c/a); // somente cjo dos reais
+            d = parseFloat(d/a); // somente cjo dos reais
+            e = parseFloat(e/a); // somente cjo dos reais
+            a = parseFloat(a/a); // somente cjo dos reais
+            
+            f = parseFloat( c - (3*Math.pow(b,2)/8) ); // somente cjo dos reais
+
+            g = parseFloat( d + (Math.pow(b,3) / 8) - (b*c/2) ) // // somente cjo dos reais
+
+            h = parseFloat( e - ((3*Math.pow(b,4))/256) + (Math.pow(b, 2)*c/16) - ( b*d/4) ); // // somente cjo dos reais
+            
+            let a1, b1, c1, d1; // coeficientes para resolução da equação cubica
+
+            a1 = 1; // somente cjo dos reais
+            b1 = parseFloat(f/2);// somente cjo dos reais
+            c1 = parseFloat(((Math.pow(f,2) -4*h)/16));// somente cjo dos reais
+            d1 = parseFloat(-Math.pow(g,2)/64);// somente cjo dos reais
+            
+
+        
+            let raizes = raizesTerceiroGrau(a1, b1, c1, d1);    
+
+         
+            
+            if( (!isNaN(raizes[0])) && (!isNaN(raizes[1])) && (!isNaN(raizes[2])) )
+            {// em caso de três raizes reais na equação cúbica...
+                let raizesNaoNulas = [];
+
+                for(let i=0; i<raizes.length; i++)
+                {///para ficar somente com as raizes positiva..
+                    if(Math.abs(raizes[i]) > 1e-10)
+                    {
+                        raizesNaoNulas.push(raizes[i]);
+                    }
+                }
+
+                    console.log("Raizes não Nulas", raizesNaoNulas);
+                    if( isNaN(math.sqrt(raizesNaoNulas[0])) )
+                    {// nesse caso temos um número complexo
+                        p = math.sqrt(raizesNaoNulas[0]);
+                    }else{
+                        //já nesse temos que criá-lo
+                        p = math.complex(Math.sqrt(raizesNaoNulas[0]), 0);
+                    }
+                   
+
+                    if(isNaN(math.sqrt(parseFloat(raizesNaoNulas[2]))))
+                    {   //nesse caso temos um número complexo
+                        q = math.sqrt(parseFloat(raizesNaoNulas[2]));
+                    }else{
+                        //já nesse temos que criá-lo
+                        q = math.complex(Math.sqrt(parseFloat(raizesNaoNulas[1]), 0))
+                    }
+
+                    let pq = math.multiply(p,q);
+                    let gc = math.complex(g, 0);
+                  
+                    r = math.multiply(math.multiply(gc,-1), math.multiply(8, pq).inverse());
+                    s = math.complex(b/(4*a),0);
+                    
+                   
+                  
+
+
+             
+                    x1 = math.add(p,q,r,math.multiply(s,-1));
+                    x2 = math.add(p, math.multiply(q,-1), math.multiply(r,-1), math.multiply(s,-1)) ;
+                    x3 = math.add(q, math.multiply(p,-1), math.multiply(r,-1), math.multiply(s,-1)) ;
+                    x4 = math.add(math.multiply(q,-1), math.multiply(p,-1), r, math.multiply(s,-1)) ;
+                    raizes4grau.push(x1,x2,x3,x4);
+                    return raizes4grau;
+
+
+
+            }else{
+                let raizesComplexas = [];
+
+                for(i=0; i<raizes.length; i++)
+                {   
+                   
+                    if(isNaN(raizes[i]) )
+                    {  // certeza de estar somente com raizes complexas
+                        raizesComplexas.push(raizes[i])
+                    }
+
+                }
+
+                
+                    p = math.sqrt(raizesComplexas[0]); //
+
+                    q = math.sqrt(raizesComplexas[1]);
+
+                     let pq = math.multiply(p,q);
+
+                    let gc = math.complex(g, 0);
+
+                     s = math.complex(b/(4*a),0);
+
+                    r =  math.multiply(math.multiply(gc,-1), math.multiply(8, pq).inverse());
+
+                    
+
+                    x1 = math.add(p,q,r,math.multiply(s,-1));
+                    x2 = math.add(p, math.multiply(q,-1), math.multiply(r,-1), math.multiply(s,-1)) ;
+                    x3 = math.add(q, math.multiply(p,-1), math.multiply(r,-1), math.multiply(s,-1)) ;
+                    x4 = math.add(math.multiply(q,-1), math.multiply(p,-1), r, math.multiply(s,-1)) ;
+                    raizes4grau.push(x1,x2,x3,x4);
+                    return raizes4grau;
+
+            }
+        }
+              
+     
+     
+
+        //console.log("Raizes 3 grau:", raizesTerceiroGrau(-0.00039191,  0.0041569,-0.0097978,0));      
+        console.log("Raizes 4 Grau:", raizesQuartoGrau(276.806,640.7982 ,925.2298, 336.4006, 760.5203));
+
+
+    </script>
+    
+</body>
+</html>
